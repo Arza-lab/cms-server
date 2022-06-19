@@ -14,7 +14,7 @@ abstract class AbstractEntity
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var \DateTime
@@ -22,7 +22,7 @@ abstract class AbstractEntity
      * @ORM\Column(name="created_at", type="datetime")
      * @Groups({"read"})
      */
-    private $createdAt;
+    protected $createdAt;
 
     /**
      * @var \DateTime|null
@@ -30,7 +30,7 @@ abstract class AbstractEntity
      * @ORM\Column(name="changed_at", type="datetime", nullable=true)
      * @Groups({"read"})
      */
-    private $changedAt;
+    protected $changedAt;
 
     /**
      * @ORM\PrePersist
