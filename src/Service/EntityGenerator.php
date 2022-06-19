@@ -7,6 +7,7 @@ use App\Model\AbstractEntity;
 use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\PhpFile;
 use Doctrine\ORM\Mapping;
+use Nette\PhpGenerator\Printer;
 
 class EntityGenerator
 {
@@ -26,26 +27,34 @@ class EntityGenerator
         return $entityName;
     }
 
-    public function create(string $entityName, string $tableName, array $columns): PhpFile
+    public function create(string $entityName, string $tableName, array $columns)
     {
         $repositoryClass = sprintf('%sRepository::class', $entityName);
 
         $entity = new PhpFile();
-        $class = $entity->addClass($entityName);
+        //$entity->setStrictTypes();
+
+        $nameSpace = $entity->addNamespace('App\Entity');
+        $class = $nameSpace->addClass($entityName);
+
 
         //use
-        $entity->addUse(ApiResource::class);
-        $entity->addUse(Mapping::class, 'ORM');
-        $entity->addUse('App\Repository\\'.$entityName.'Repository');
+        $nameSpace->addUse(ApiResource::class);
+        $nameSpace->addUse(Mapping::class, 'ORM');
+        $nameSpace->addUse('App\Repository\\'.$entityName.'Repository');
 
 
         //extends AbstractEntity
-        $class->setExtends(AbstractEntity::class);
+        $class->setExtends('\App\Model\AbstractEntity');
 
         $class->addAttribute(self::API_PLATFORM_ANNOTATION_PATTERN);
         //$class->addAttribute(sprintf(self::DOCTRINE_ORM_ANNOTATION_PATTERN, $entityName));
         $class->addAttribute('Orm\Entity', ['repositoryClass' => new Literal($repositoryClass)]);
         $class->addProperty('name')->setProtected()->addAttribute('ORM\Column', ['type' => 'string', 'length' => 255]);
+
+        $printer = new Printer; // or PsrPrinter
+        $printer->setTypeResolving(false);
+        $entity =  $printer->printFile($entity);
 
         return $entity;
     }

@@ -25,8 +25,6 @@ class ContentModelController extends AbstractController
         //write to file in src/Entity
         $file = fopen($entityDir.$entityName.'.php', 'w');
 
-
-
         fwrite(  $file, $entity);
 
         fclose($file);
